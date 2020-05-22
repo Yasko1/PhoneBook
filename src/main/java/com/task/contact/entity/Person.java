@@ -2,6 +2,7 @@ package com.task.contact.entity;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -11,7 +12,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="name")
     private String name;
@@ -22,11 +23,11 @@ public class Person {
     public Person(){
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -53,5 +54,20 @@ public class Person {
             contact.setPerson(this);
             contacts.add(contact);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return id.equals(person.id) &&
+                name.equals(person.name) &&
+                contacts.equals(person.contacts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, contacts);
     }
 }

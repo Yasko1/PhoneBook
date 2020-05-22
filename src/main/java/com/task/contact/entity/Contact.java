@@ -3,6 +3,7 @@ package com.task.contact.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name="contacts")
@@ -46,5 +47,19 @@ public class Contact {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return id == contact.id &&
+                Objects.equals(phone, contact.phone) &&
+                Objects.equals(person, contact.person);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, phone, person);
     }
 }

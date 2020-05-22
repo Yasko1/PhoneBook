@@ -1,8 +1,11 @@
 package com.task.contact.repository;
 
 import com.task.contact.entity.Person;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface PersonRepository extends JpaRepository<Person, Integer> {
+import java.util.List;
 
+public interface PersonRepository extends CrudRepository<Person, Integer> {
+
+    Person findByName(String name);
 }
