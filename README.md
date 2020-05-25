@@ -15,6 +15,7 @@ mysql
  - удаление записи в таблице person, и удаление связанных записей в таблице contacts
  
  3. проверка rest api напрямую
+
 curl --request GET http://localhost:8080/all
 
 curl --request GET  http://localhost:8080/personByName?name=TestName
