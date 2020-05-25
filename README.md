@@ -16,8 +16,11 @@ mysql
  
  3. проверка rest api напрямую
 curl --request GET http://localhost:8080/all
+
 curl --request GET  http://localhost:8080/personByName?name=TestName
+
 curl --request POST --header "Content-Type: application/json" --data "{\"name\":\"TestName\"}" http://localhost:8080/create-person
+
 curl --request DELETE  http://localhost:8080/delete/
  
 Использовалось: Spring Boot + Hibernate + MapStruct + Maven
