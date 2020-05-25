@@ -6,21 +6,21 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name="person")
+@Table(name = "person")
 public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Integer id;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Contact> contacts;
 
-    public Person(){
+    public Person() {
     }
 
     public Integer getId() {
@@ -38,6 +38,7 @@ public class Person {
     public void setName(String name) {
         this.name = name;
     }
+
     public Set<Contact> getContacts() {
         return contacts;
     }
@@ -68,6 +69,7 @@ public class Person {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, contacts);
+        final int PRIME = 31;
+        return getId() * PRIME;
     }
 }

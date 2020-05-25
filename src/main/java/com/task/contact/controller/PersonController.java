@@ -1,6 +1,7 @@
 package com.task.contact.controller;
 
 import com.task.contact.entity.Person;
+import com.task.contact.mapper.dto.PersonDTO;
 import com.task.contact.exception.PersonNotFoundException;
 import com.task.contact.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +19,24 @@ public class PersonController {
     @Autowired
     IPersonService personService;
 
-    @GetMapping("person/{id}")
-    public ResponseEntity<Person> getPersonById(@PathVariable("id") Integer id) {
-        Person person = personService.getPersonById(id);
-        return new ResponseEntity<Person>(person, HttpStatus.OK);
+    @GetMapping("/all")
+    public List<PersonDTO> getAllPersons() {
+        return personService.getAll();
     }
 
-    @GetMapping("persons")
-    public ResponseEntity<List<Person>> getAllPersons() {
-        List<Person> list = personService.getAllPerson();
-        return new ResponseEntity<List<Person>>(list, HttpStatus.OK);
+    @GetMapping("/personByName")
+    public List<PersonDTO> getByName(@ModelAttribute("name") String name) {
+        List<PersonDTO> person = personService.getPersonByName(name);
+        return person;
     }
 
-    @PostMapping("person")
+    @GetMapping("/person/{id}")
+    public ResponseEntity<PersonDTO> getPersonById(@PathVariable("id") Integer id) {
+        PersonDTO person = personService.getPersonById(id);
+        return new ResponseEntity<PersonDTO>(person, HttpStatus.OK);
+    }
+
+    @PostMapping("/create-person")
     public ResponseEntity<Void> addPerson(@RequestBody Person person, UriComponentsBuilder builder) {
         boolean flag = personService.addPerson(person);
         if (flag == false) {
@@ -41,14 +47,15 @@ public class PersonController {
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("person")
-    public ResponseEntity<Person> updatePerson(@RequestBody Person person) {
-        personService.updatePerson(person);
-        return new ResponseEntity<Person>(person, HttpStatus.OK);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Void> updatePerson(@PathVariable(value = "id") Integer personId,
+                                             @RequestBody Person personDetails) throws PersonNotFoundException {
+        personService.updatePerson(personId, personDetails);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @DeleteMapping("person/{id}")
-    public ResponseEntity<Void> deletePerson(@PathVariable("id") Integer id) throws PersonNotFoundException {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deletePerson(@ModelAttribute("id") Integer id) throws PersonNotFoundException {
         personService.deletePerson(id);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }

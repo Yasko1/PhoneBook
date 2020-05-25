@@ -1,12 +1,11 @@
 package com.task.contact.service;
 
-import com.task.contact.entity.Contact;
 import com.task.contact.entity.Person;
+import com.task.contact.mapper.dto.PersonDTO;
 import com.task.contact.exception.PersonNotFoundException;
+import com.task.contact.mapper.PersonMapper;
 import com.task.contact.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,40 +19,41 @@ public class PersonService implements IPersonService {
     PersonRepository personRepository;
 
     @Override
-    public Person getPersonById(Integer id) {
-        Person obj = personRepository.findById(id).get();
-        return obj;
+    public List<PersonDTO> getAll() {
+        List<Person> list = new ArrayList<>();
+        personRepository.findAll().forEach(e -> list.add(e));
+        return PersonMapper.PERSON_MAPPER.toListPersons(list);
     }
 
     @Override
-    @GetMapping("/getall")
-    public List<Person> getAllPerson() {
+    public PersonDTO getPersonById(Integer id) {
+        Person obj = personRepository.findById(id).get();
+        return PersonMapper.PERSON_MAPPER.toPersonDto(obj);
+    }
+
+    @Override
+    public List<PersonDTO> getAllPerson() {
         List<Person> list = new ArrayList<>();
         personRepository.findAll().forEach(e -> list.add(e));
-        return list;
+        return PersonMapper.PERSON_MAPPER.toListPersons(list);
     }
 
     // get person by name and his all contacts
-    @GetMapping("/person/{name}")
-    public Person getNoteByName(@PathVariable(value = "name") String personName)
-            throws PersonNotFoundException {
-        List<Person> customers = (List<Person>) personRepository.findAll();
-        int id=0;
+    public List<PersonDTO> getPersonByName(@PathVariable(value = "name") String personName) {
+        /*List<Person> customers = (List<Person>) personRepository.findAll();
+        List<PersonDTO> personDTOS = new ArrayList<>();
         for(Person person:customers){
             if(personName.equals(person.getName())){
-                id=person.getId();
+                personDTOS.add(person);
             }
-        }
-        return personRepository.findById(id)
-                .orElseThrow(() -> new PersonNotFoundException(personName));
+        }*/
+        List<Person> list = personRepository.findByName(personName);
+        return PersonMapper.PERSON_MAPPER.toListPersons(list);
     }
 
     @Override
-    @PostMapping("/create-person")
     public boolean addPerson(@RequestBody Person person) {
-        Integer searchId = person.getId();
-        List<Person> list = (List<Person>) personRepository.findByName(person.getName());
-        if (list.size() > 0) {
+        if (person.getName() == null) {
             return false;
         } else {
             personRepository.save(person);
@@ -62,17 +62,16 @@ public class PersonService implements IPersonService {
     }
 
     //create contact for user(using his id)
-    @PostMapping("/create-contact/{name}")
+    /*@PostMapping("/create-contact/{name}")
     public Person createContact(@PathVariable(value = "name")String name,
                                 @RequestBody Contact contacts) throws PersonNotFoundException {
-        Person person = getNoteByName(name);
+        Person person = getPersonByName(name);
         person.addContacts(contacts);
         return personRepository.save(person);
-    }
+    }*/
 
     // update
-    @PutMapping(value="/persons/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updatePerson(@PathVariable(value = "id") int personId,
+    public void updatePerson(Integer personId,
                              @RequestBody Person personDetails) throws PersonNotFoundException {
 
         Person person = personRepository.findById(personId)
@@ -83,15 +82,9 @@ public class PersonService implements IPersonService {
         Person updatedperson = personRepository.save(person);
     }
 
-    @Override
-    public void updatePerson(Person article) {
-        personRepository.save(article);
-    }
-
     // delete person by id with all contacts
     @Override
-    @DeleteMapping("/persons/{id}")
-    public void deletePerson(@PathVariable(value = "id") Integer personId) throws PersonNotFoundException {
+    public void deletePerson(@RequestBody Integer personId) throws PersonNotFoundException {
         Person person = personRepository.findById(personId)
                 .orElseThrow(() -> new PersonNotFoundException(personId));
         personRepository.delete(person);

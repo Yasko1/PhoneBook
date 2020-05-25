@@ -6,15 +6,15 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name="contacts")
+@Table(name = "contacts")
 public class Contact {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name="telephone")
+    @Column(name = "telephone")
     private String phone;
 
     @ManyToOne
@@ -22,7 +22,7 @@ public class Contact {
     @JsonIgnore
     Person person;
 
-    public Contact(){
+    public Contact() {
     }
 
     public int getId() {
@@ -48,6 +48,7 @@ public class Contact {
     public void setPerson(Person person) {
         this.person = person;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,6 +61,7 @@ public class Contact {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, phone, person);
+        final int PRIME = 31;
+        return getId() * PRIME;
     }
 }
